@@ -13,6 +13,8 @@ import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/store/authStore';
 import { ROUTES } from '@/constants';
 import api from '@/services/api';
+import GoogleLogin from '@/components/auth/GoogleLogin';
+
 
 const registerSchema = z
   .object({
@@ -68,15 +70,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full gap-2"
-        type="button"
-        onClick={() => toast.info('Google OAuth coming soon')}
-      >
-        <Globe className="h-4 w-4" />
-        Continue with Google
-      </Button>
+      <GoogleLogin />
 
       <div className="my-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-border" />
