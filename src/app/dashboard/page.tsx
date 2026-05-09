@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Wand2, BarChart3, History, CreditCard, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -66,11 +67,9 @@ export default function DashboardPage() {
         title={`Good day, ${user?.name?.split(' ')[0] ?? 'there'} 👋`}
         description="Here's what's happening with your AI content today."
       >
-        <Button asChild size="sm">
-          <Link href={ROUTES.AI_GENERATOR}>
-            <Wand2 className="mr-1.5 h-4 w-4" />
-            Generate Content
-          </Link>
+        <Button size="sm" render={<Link href={ROUTES.AI_GENERATOR} />}>
+          <Wand2 className="mr-1.5 h-4 w-4" />
+          Generate Content
         </Button>
       </PageHeader>
 
@@ -132,12 +131,47 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {/* Chart Section */}
+      <Card className="p-5">
+        <div className="mb-4">
+          <h3 className="font-semibold">Token Usage Overview</h3>
+          <p className="text-sm text-muted-foreground">Tokens consumed over the last 7 days.</p>
+        </div>
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={[
+              { date: 'Mon', tokens: 1200 },
+              { date: 'Tue', tokens: 2100 },
+              { date: 'Wed', tokens: 800 },
+              { date: 'Thu', tokens: 3400 },
+              { date: 'Fri', tokens: 1500 },
+              { date: 'Sat', tokens: 4000 },
+              { date: 'Sun', tokens: 2800 },
+            ]}>
+              <defs>
+                <linearGradient id="colorTokens" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} dy={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} dx={-10} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', backgroundColor: 'hsl(var(--card))' }}
+                itemStyle={{ color: 'hsl(var(--foreground))' }}
+              />
+              <Area type="monotone" dataKey="tokens" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorTokens)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
       {/* Recent Content */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Recent Content</h3>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={ROUTES.HISTORY}>View all</Link>
+          <Button variant="ghost" size="sm" render={<Link href={ROUTES.HISTORY} />}>
+            View all
           </Button>
         </div>
         {recentLoading ? (

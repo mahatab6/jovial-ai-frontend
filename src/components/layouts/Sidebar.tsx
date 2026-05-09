@@ -15,16 +15,17 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  Menu,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
 import { useSidebarStore } from '@/store/sidebarStore';
 import { APP_NAME, ROUTES } from '@/constants';
 import { UserRole } from '@/types';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface NavItem {
   label: string;
@@ -54,7 +55,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
     .map((n) => n[0])
     .join('')
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2) || 'U';
 
   const filtered = navItems.filter(
     (item) => !item.roles || (user?.role && item.roles.includes(user.role))
@@ -62,17 +63,18 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
 
   const handleLogout = () => {
     logout();
+    toast.success('Logged out successfully');
     router.push(ROUTES.LOGIN);
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-card">
       {/* Brand */}
       <div className={cn('flex h-16 items-center gap-2.5 border-b border-border px-4', collapsed && 'justify-center px-2')}>
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
           <Sparkles className="h-4 w-4 text-primary-foreground" />
         </div>
-        {!collapsed && <span className="font-bold text-lg">{APP_NAME}</span>}
+        {!collapsed && <span className="font-bold text-lg tracking-tight">{APP_NAME}</span>}
       </div>
 
       {/* Nav Items */}
@@ -95,7 +97,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
               <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')} />
               {!collapsed && (
                 <>
-                  <span>{label}</span>
+                  <span className="truncate">{label}</span>
                   {badge && (
                     <Badge variant="secondary" className="ml-auto text-[10px]">
                       {badge}
@@ -109,7 +111,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
       </nav>
 
       {/* User Footer */}
-      <div className={cn('border-t border-border p-3', collapsed && 'flex justify-center')}>
+      <div className={cn('border-t border-border p-3 mt-auto', collapsed && 'flex justify-center')}>
         {collapsed ? (
           <button
             onClick={handleLogout}
@@ -119,24 +121,22 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
             <LogOut className="h-4 w-4" />
           </button>
         ) : (
-          <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9 shrink-0">
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+          <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 p-2">
+            <Avatar className="h-8 w-8 shrink-0">
+              <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{user?.name}</p>
-              <Badge variant="secondary" className="h-4 px-1 text-[10px]">
-                {user?.role}
-              </Badge>
+              <p className="truncate text-xs font-semibold leading-none">{user?.name}</p>
+              <p className="truncate text-[10px] text-muted-foreground mt-1">{user?.role}</p>
             </div>
             <button
               onClick={handleLogout}
               title="Logout"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5" />
             </button>
           </div>
         )}
@@ -153,7 +153,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'relative hidden h-screen flex-col border-r border-border bg-card transition-all duration-300 lg:flex',
+        'relative hidden h-screen flex-col border-r border-border transition-all duration-300 lg:flex',
         isCollapsed ? 'w-16' : 'w-64'
       )}
     >
@@ -162,7 +162,7 @@ export function Sidebar() {
       {/* Collapse Toggle */}
       <button
         onClick={() => setCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-accent transition-colors"
+        className="absolute -right-3 top-20 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-accent transition-colors"
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (

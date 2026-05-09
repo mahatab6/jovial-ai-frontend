@@ -37,22 +37,18 @@ export function CTASection() {
               size="lg"
               variant="secondary"
               className="gap-2 px-8 text-base font-semibold shadow-lg"
-              asChild
+              render={<Link href={ROUTES.REGISTER} />}
             >
-              <Link href={ROUTES.REGISTER}>
-                <Sparkles className="h-5 w-5" />
-                Get Started Free
-              </Link>
+              <Sparkles className="h-5 w-5" />
+              Get Started Free
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="gap-2 border-white/30 bg-white/10 text-white hover:bg-white/20"
-              asChild
+              render={<Link href={ROUTES.LOGIN} />}
             >
-              <Link href={ROUTES.LOGIN}>
-                Sign In <ArrowRight className="h-4 w-4" />
-              </Link>
+              Sign In <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
 

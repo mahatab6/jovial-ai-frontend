@@ -125,11 +125,11 @@ export function PricingSection() {
             </ul>
 
             <Button
-              asChild
               variant={highlighted ? 'default' : 'outline'}
               className="w-full"
+              render={<Link href={href} />}
             >
-              <Link href={href}>{cta}</Link>
+              {cta}
             </Button>
           </motion.div>
         ))}

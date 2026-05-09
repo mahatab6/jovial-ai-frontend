@@ -90,16 +90,12 @@ export function HeroSection() {
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button size="lg" className="gap-2 px-8 text-base shadow-lg shadow-primary/25" asChild>
-            <Link href={ROUTES.REGISTER}>
-              <Sparkles className="h-5 w-5" />
-              Start Generating Free
-            </Link>
+          <Button size="lg" className="gap-2 px-8 text-base shadow-lg shadow-primary/25" render={<Link href={ROUTES.REGISTER} />}>
+            <Sparkles className="h-5 w-5" />
+            Start Generating Free
           </Button>
-          <Button size="lg" variant="outline" className="gap-2 text-base" asChild>
-            <Link href="/#features">
-              See How It Works <ArrowRight className="h-4 w-4" />
-            </Link>
+          <Button size="lg" variant="outline" className="gap-2 text-base" render={<Link href="/#features" />}>
+            See How It Works <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
 
