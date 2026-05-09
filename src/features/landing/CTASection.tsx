@@ -14,11 +14,11 @@ export function CTASection() {
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/90 to-purple-600 px-8 py-16 text-center text-primary-foreground shadow-2xl"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2573eb] via-[#4f41e5] to-[#93334a] px-8 py-16 text-center text-white shadow-2xl"
       >
         {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-500/30 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/20 blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-purple-400/30 blur-[80px]" />
 
         <div className="relative z-10">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
