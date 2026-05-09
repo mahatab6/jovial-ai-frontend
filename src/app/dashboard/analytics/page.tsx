@@ -1,16 +1,27 @@
 'use client';
 
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart3, TrendingUp, Sparkles, Layers, Activity } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Badge } from '@/components/ui/badge';
 import api from '@/services/api';
-import { DashboardLineChart } from '@/components/dashboard/charts/DashboardLineChart';
-import { DashboardPieChart } from '@/components/dashboard/charts/DashboardPieChart';
 import { ChartConfig } from '@/components/ui/chart';
-import { DashboardGridSkeleton } from '@/components/dashboard/skeletons/DashboardSkeleton';
+import { DashboardGridSkeleton, ChartSkeleton } from '@/components/dashboard/skeletons/DashboardSkeleton';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+
+// Step 29: Dynamic Imports for performance
+const DashboardLineChart = dynamic(
+  () => import('@/components/dashboard/charts/DashboardLineChart').then((mod) => mod.DashboardLineChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
+
+const DashboardPieChart = dynamic(
+  () => import('@/components/dashboard/charts/DashboardPieChart').then((mod) => mod.DashboardPieChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
 
 const chartConfig: ChartConfig = {
   tokens: {
@@ -117,22 +128,26 @@ function AnalyticsContent() {
       {/* Charts Grid */}
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2">
-          <DashboardLineChart
-            title="Token Usage Trends"
-            description="Daily token consumption over the last week."
-            data={timeSeriesData}
-            config={chartConfig}
-            dataKey="tokens"
-          />
+          <ErrorBoundary>
+            <DashboardLineChart
+              title="Token Usage Trends"
+              description="Daily token consumption over the last week."
+              data={timeSeriesData}
+              config={chartConfig}
+              dataKey="tokens"
+            />
+          </ErrorBoundary>
         </div>
-        <DashboardPieChart
-          title="Content Distribution"
-          description="Breakdown by content type."
-          data={typeData}
-          config={chartConfig}
-          dataKey="value"
-          nameKey="name"
-        />
+        <ErrorBoundary>
+          <DashboardPieChart
+            title="Content Distribution"
+            description="Breakdown by content type."
+            data={typeData}
+            config={chartConfig}
+            dataKey="value"
+            nameKey="name"
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );
@@ -151,7 +166,9 @@ export default function AnalyticsPage() {
       </PageHeader>
 
       <Suspense fallback={<DashboardGridSkeleton />}>
-        <AnalyticsContent />
+        <ErrorBoundary>
+          <AnalyticsContent />
+        </ErrorBoundary>
       </Suspense>
     </div>
   );

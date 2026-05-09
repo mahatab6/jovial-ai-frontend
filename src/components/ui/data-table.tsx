@@ -81,23 +81,22 @@ export function DataTable<TData, TValue>({
                 table.getColumn(searchKey)?.setFilterValue(event.target.value)
               }
               className="pl-9 bg-muted/50"
+              aria-label="Filter table"
             />
           </div>
         )}
-        <div className="flex items-center gap-2">
-          {/* Add more controls here if needed, like column visibility */}
-        </div>
       </div>
 
-      <div className="rounded-md border border-border">
-        <div className="relative w-full overflow-auto">
+      <div className="rounded-md border border-border bg-card">
+        {/* Step 30: Responsive Audit - overflow-x-auto */}
+        <div className="relative w-full overflow-x-auto scrollbar-thin scrollbar-thumb-muted">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
+                <TableRow key={headerGroup.id} className="bg-muted/30 hover:bg-muted/30">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="whitespace-nowrap">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -116,9 +115,10 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
+                    className="hover:bg-muted/10 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className="whitespace-nowrap py-3 px-4">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -143,15 +143,15 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between px-2">
-        <div className="flex-1 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between px-2 py-2">
+        <div className="flex-1 text-xs text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Page</p>
-            <strong className="text-sm font-medium">
+            <p className="text-xs font-medium">Page</p>
+            <strong className="text-xs font-medium">
               {table.getState().pagination.pageIndex + 1} of{' '}
               {table.getPageCount()}
             </strong>
@@ -159,20 +159,22 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
+              size="sm"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              aria-label="Go to previous page"
             >
-              <span className="sr-only">Go to previous page</span>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
+              size="sm"
               className="h-8 w-8 p-0"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              aria-label="Go to next page"
             >
-              <span className="sr-only">Go to next page</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -196,11 +198,12 @@ export function SortableHeader({
     <Button
       variant="ghost"
       size="sm"
-      className={cn('-ml-3 h-8 data-[state=open]:bg-accent', className)}
+      className={cn('-ml-3 h-8 data-[state=open]:bg-accent hover:text-primary transition-colors', className)}
       onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      aria-label={`Sort by ${title}`}
     >
-      <span>{title}</span>
-      <ArrowUpDown className="ml-2 h-4 w-4" />
+      <span className="text-xs font-semibold uppercase tracking-wider">{title}</span>
+      <ArrowUpDown className="ml-2 h-3 w-3 opacity-50" />
     </Button>
   );
 }
