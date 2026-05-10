@@ -14,6 +14,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   initialize: () => Promise<void>;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
@@ -26,6 +27,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      isLoading: true,
       initialize: async () => {
         try {
           // Use the official authClient to get session. 
@@ -52,6 +54,8 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error('Auth initialization failed:', error);
           set({ user: null, isAuthenticated: false });
+        } finally {
+          set({ isLoading: false });
         }
       },
       setUser: (user) => set({ user, isAuthenticated: !!user }),

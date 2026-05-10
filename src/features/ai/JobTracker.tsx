@@ -151,7 +151,7 @@ export function JobTracker({ jobId, onReset }: JobTrackerProps) {
             <div className="text-left bg-destructive/5 p-4 rounded-xl border border-destructive/20 mt-4">
               <p className="text-xs font-bold text-destructive uppercase mb-1">Error Details</p>
               <p className="text-sm text-destructive/90 leading-relaxed">
-                {data?.failedReason || data?.error || 'An unexpected error occurred during generation. Please check your prompt and try again.'}
+                {data?.failedReason || 'An unexpected error occurred during generation. Please check your prompt and try again.'}
               </p>
             </div>
           )}

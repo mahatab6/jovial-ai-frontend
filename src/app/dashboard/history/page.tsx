@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Search, Filter, Loader2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -67,7 +67,7 @@ export default function HistoryPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   // Simple debounce implementation without external deps
-  useState(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       setPage(1); // Reset page on new search
@@ -118,7 +118,7 @@ export default function HistoryPage() {
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 p-1 sm:p-0">
           <div className="h-8 w-px bg-border/50 hidden sm:block mx-2" />
-          <Select value={typeFilter} onValueChange={(val) => { setTypeFilter(val); setPage(1); }}>
+          <Select value={typeFilter} onValueChange={(val) => { if (val) { setTypeFilter(val); setPage(1); } }}>
             <SelectTrigger className="w-full sm:w-[200px] h-10 border-none bg-muted/50 hover:bg-muted transition-colors rounded-xl font-medium">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>

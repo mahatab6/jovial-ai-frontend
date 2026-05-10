@@ -12,12 +12,13 @@ const footerLinks = {
     { label: 'Analytics', href: ROUTES.ANALYTICS },
   ],
   company: [
-    { label: 'About', href: '/about' },
+    { label: 'About Us', href: '/about' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Careers', href: '/careers' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Careers', href: '/careers' },
   ],
-  legal: [
+  support: [
+    { label: 'Help Center', href: '/help' },
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Service', href: '/terms' },
     { label: 'Cookie Policy', href: '/cookies' },
@@ -34,7 +35,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-6">
           {/* Brand */}
           <div className="col-span-2">
             <Link href={ROUTES.HOME} className="flex items-center gap-2">
@@ -64,9 +65,9 @@ export function Footer() {
 
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
+            <div key={category} className="col-span-1">
               <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
-                {category}
+                {category === 'support' ? 'Support' : category.charAt(0).toUpperCase() + category.slice(1)}
               </h4>
               <ul className="space-y-2.5">
                 {links.map(({ label, href }) => (

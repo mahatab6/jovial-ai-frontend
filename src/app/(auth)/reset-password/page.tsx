@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -25,7 +26,7 @@ const schema = z
 
 type Form = z.infer<typeof schema>;
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -74,5 +75,13 @@ export default function ResetPasswordPage() {
         <Link href={ROUTES.LOGIN} className="font-medium text-primary hover:underline">Back to Login</Link>
       </p>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

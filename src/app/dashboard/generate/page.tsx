@@ -27,7 +27,7 @@ import api from '@/services/api';
 const generateSchema = z.object({
   prompt: z.string().min(10, 'Prompt must be at least 10 characters long'),
   type: z.enum(['BLOG', 'SOCIAL_POST', 'EMAIL', 'PRODUCT_DESC', 'OTHER'], {
-    required_error: 'Please select a content type',
+    error: 'Please select a content type',
   }),
   tone: z.string().optional(),
   model: z.string().optional(),

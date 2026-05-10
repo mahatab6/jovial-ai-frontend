@@ -130,7 +130,7 @@ function AdminContent() {
           <Select
             disabled={u.id === user?.id || updateRoleMutation.isPending}
             value={u.role}
-            onValueChange={(val) => updateRoleMutation.mutate({ userId: u.id, role: val })}
+            onValueChange={(val) => val && updateRoleMutation.mutate({ userId: u.id, role: val })}
           >
             <SelectTrigger className="w-32 h-8 text-xs">
               <SelectValue />
