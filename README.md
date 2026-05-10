@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jovial AI — Frontend
 
-## Getting Started
+NPM package: `jovial-ai-frontend`
 
-First, run the development server:
+Frontend live: https://jovial-ai-frontend.vercel.app
+
+Backend live: https://jovial-backend-production.up.railway.app
+
+GitHub Repo (frontend): https://github.com/mahatab6/jovial-ai-frontend
+
+GitHub Repo (backend): https://github.com/mahatab6/jovial-backend
+
+## Test Accounts
+
+- **Admin**
+  - email: admin@gmail.com
+  - pass: password1234
+- **Manager**
+  - email: manager@gmail.com
+  - pass: password1234
+- **User**
+  - email: user@gmail.com
+  - pass: password1234
+
+## Project Overview
+
+Jovial AI is an AI-powered content generation platform that helps users produce blog posts, social content, emails, and product descriptions using modern LLMs and custom prompts. This repository contains the frontend (Next.js + TypeScript) for the SaaS web app.
+
+## Tech Stack
+
+- Frontend: Next.js (App Router), React, TypeScript
+- Styling: Tailwind CSS (utility-first) and custom CSS
+- State & Data: React Query, Zustand (where applicable)
+- UI: Custom components + Lucide icons
+- API: Backend (separate repo) provides AI endpoints and auth
+- Hosting: Vercel (frontend), Railway (backend)
+
+## AI Features
+
+- Content generation: create blog posts, marketing copy, social captions, and email drafts using AI prompts and templates.
+- Regeneration & variations: generate multiple variants for A/B testing and iteratively refine outputs.
+- History & results viewer: store and review previously generated outputs with metadata.
+- Job tracking: background generation jobs can be monitored and retrieved.
+
+Feature notes: the frontend calls the backend API for AI requests, which in turn calls the LLM provider. The UI includes controls for model options, length, tone, and templates.
+
+## Setup Instructions (Frontend)
+
+Prerequisites
+
+- Node.js 18+ and npm/yarn/pnpm
+- Access to the backend API (see backend repo)
+
+Clone
+
+```bash
+git clone https://github.com/mahatab6/jovial-ai-frontend.git
+cd jovial-ai-frontend
+```
+
+Install
+
+```bash
+npm install
+# or
+pnpm install
+```
+
+Environment
+
+Create a `.env.local` file at the project root and set any required variables. Typical values (check backend README for exact names):
+
+```
+NEXT_PUBLIC_API_BASE_URL=https://jovial-backend-production.up.railway.app
+# Add any auth or third-party keys here
+```
+
+Run (development)
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build (production)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Deployment
 
-## Learn More
+Deploy to Vercel by connecting the GitHub repository or use the Vercel CLI. Ensure the environment variables match those used in `.env` and the backend is reachable.
 
-To learn more about Next.js, take a look at the following resources:
+## Backend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See the backend repo for API details, database setup, and environment variables: https://github.com/mahatab6/jovial-backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Admin & Developer Notes
 
-## Deploy on Vercel
+- Default test accounts are included above for convenience in staging/demo environments. Rotate these credentials before using in production.
+- If you need additional test users or want seeding scripts run, check the backend repo.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contact
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For questions or issues, open an issue on the frontend or backend GitHub repo.
+
+---
+
+This README was updated to include live links, repos, test accounts, project overview, tech stack, AI feature notes, and setup instructions.

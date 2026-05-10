@@ -9,7 +9,6 @@ export default function GoogleLogin() {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: process.env.FRONTEND_URL
       });
     } catch (error) {
       console.error("Login failed:", error);
