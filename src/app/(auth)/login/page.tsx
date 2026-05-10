@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, LogIn, Globe } from 'lucide-react';
+import { Loader2, LogIn, Globe, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +25,16 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setUser, setToken } = useAuthStore();
+  const { setUser, setToken, isAuthenticated } = useAuthStore();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(ROUTES.DASHBOARD);
+    }
+  }, [isAuthenticated, router]);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -41,6 +51,7 @@ export default function LoginPage() {
       setUser(user);
       toast.success('Welcome back!', { description: `Logged in as ${user.name}` });
       router.push(ROUTES.DASHBOARD);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Invalid email or password';
       setError('email', { message: msg });
@@ -96,14 +107,27 @@ export default function LoginPage() {
               Forgot password?
             </Link>
           </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            autoComplete="current-password"
-            {...register('password')}
-            className={errors.password ? 'border-destructive' : ''}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              {...register('password')}
+              className={`${errors.password ? 'border-destructive' : ''} pr-10`}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-xs text-destructive">{errors.password.message}</p>
           )}

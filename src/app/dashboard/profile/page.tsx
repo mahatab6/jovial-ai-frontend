@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 import { useAuthStore } from '@/store/authStore';
 import api from '@/services/api';
@@ -64,7 +65,7 @@ export default function ProfilePage() {
   } = useForm<PreferencesForm>({
     resolver: zodResolver(preferencesSchema),
     defaultValues: {
-      defaultModel: 'gpt-4o-mini',
+      defaultModel: 'gemini-2.5-flash',
       preferredTone: 'professional',
     },
   });
@@ -87,12 +88,18 @@ export default function ProfilePage() {
   const onProfileSave = async (data: ProfileForm) => {
     try {
       setProfileSaving(true);
-      await api.patch('/api/v1/users/me', data);
-      await initialize(); // Refresh global auth state
+      // We only allow updating the name. Email is read-only.
+      const { name } = data;
+      await api.patch('/api/v1/users/me', { name });
+      
+      // Refresh global auth state to reflect new name in header/profile
+      await initialize(); 
+      
       toast.success('Profile updated successfully');
     } catch (err: any) {
+      console.error('Profile update error:', err);
       const msg = err.response?.data?.message || 'Failed to update profile';
-      toast.error('Error', { description: msg });
+      toast.error('Update Failed', { description: msg });
     } finally {
       setProfileSaving(false);
     }
@@ -113,117 +120,184 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-8">
+    <div className="mx-auto max-w-5xl space-y-10 pb-12">
       <PageHeader
-        title="Profile Settings"
-        description="Manage your account details and AI generation preferences."
+        title="Account Workspace"
+        description="Personalize your AI experience and manage your professional identity."
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-          <User className="h-5 w-5 text-primary" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 shadow-inner">
+          <Settings className="h-6 w-6 text-primary" />
         </div>
       </PageHeader>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-5">
         
-        {/* Profile Card */}
-        <Card className="p-6 border-border shadow-sm">
-          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
-            <User className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-lg font-semibold">Personal Information</h3>
-          </div>
-
-          <form onSubmit={handleProfileSubmit(onProfileSave)} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                {...registerProfile('name')}
-                className={profileErrors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
-              />
-              {profileErrors.name && (
-                <p className="text-xs text-destructive">{profileErrors.name.message}</p>
-              )}
+        {/* Profile Navigation/Info Side */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="p-8 border-border/50 bg-card/50 backdrop-blur-md shadow-xl rounded-3xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <User className="h-20 w-20" />
+            </div>
+            
+            <div className="flex flex-col items-center text-center relative z-10">
+              <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-1 shadow-lg mb-4">
+                <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-3xl font-bold text-primary capitalize">
+                  {user?.name?.[0] || 'U'}
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight">{user?.name}</h2>
+              <p className="text-sm text-muted-foreground font-medium mt-1">{user?.email}</p>
+              
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                <Badge variant="secondary" className="rounded-full px-3 py-1 bg-primary/10 text-primary border-none font-bold">
+                  {user?.role === 'ADMIN' ? 'Administrator' : 'Standard Member'}
+                </Badge>
+                <Badge variant="outline" className="rounded-full px-3 py-1 border-border/50 font-bold">
+                  {user?.credits ?? 0} Credits
+                </Badge>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                disabled
-                {...registerProfile('email')}
-                className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-              />
-              <p className="text-[10px] text-muted-foreground">Email address cannot be changed.</p>
+            <div className="mt-8 pt-8 border-t border-border/30 space-y-4 relative z-10">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground font-medium">Account Status</span>
+                <span className="font-bold text-emerald-500 flex items-center gap-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Active
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground font-medium">Member Since</span>
+                <span className="font-bold">May 2024</span>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6 border-border/50 bg-primary/5 rounded-3xl border-dashed border-2">
+            <div className="flex items-start gap-4">
+              <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h4 className="font-bold text-sm">Pro Tip</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                  Updating your preferred tone helps our AI engines generate more relevant content for your specific needs.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Forms Side */}
+        <div className="lg:col-span-3 space-y-8">
+          {/* Profile Card */}
+          <Card className="p-8 border-border/50 bg-card/30 backdrop-blur-sm shadow-sm rounded-3xl border">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <User className="h-4 w-4 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold tracking-tight">Personal Information</h3>
             </div>
 
-            <Button type="submit" disabled={isProfileSaving} className="w-full sm:w-auto mt-4">
-              {isProfileSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              Save Changes
-            </Button>
-          </form>
-        </Card>
-
-        {/* Preferences Card */}
-        <Card className="p-6 border-border shadow-sm">
-          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
-            <Settings className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-lg font-semibold">AI Preferences</h3>
-          </div>
-
-          <form onSubmit={handlePrefsSubmit(onPrefsSave)} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="defaultModel">Default Model</Label>
-              <Controller
-                control={prefsControl}
-                name="defaultModel"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="gpt-4o-mini">GPT-4o Mini (Fast)</SelectItem>
-                      <SelectItem value="gpt-4o">GPT-4o (High Quality)</SelectItem>
-                      <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                      <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <form onSubmit={handleProfileSubmit(onProfileSave)} className="space-y-6">
+              <div className="space-y-2.5">
+                <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">Display Name</Label>
+                <Input
+                  id="name"
+                  placeholder="Enter your full name"
+                  {...registerProfile('name')}
+                  className={`h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary/50 transition-all ${profileErrors.name ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+                {profileErrors.name && (
+                  <p className="text-xs text-destructive font-medium ml-1">{profileErrors.name.message}</p>
                 )}
-              />
-              {prefsErrors.defaultModel && (
-                <p className="text-xs text-destructive">{prefsErrors.defaultModel.message}</p>
-              )}
+              </div>
+
+              <div className="space-y-2.5 opacity-80">
+                <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">Email Identity</Label>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    disabled
+                    {...registerProfile('email')}
+                    className="h-12 rounded-xl bg-muted/20 text-muted-foreground border-dashed border-border/50 cursor-not-allowed pr-10"
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground/70 italic ml-1">Email address is managed by your authentication provider.</p>
+              </div>
+
+              <div className="pt-4">
+                <Button type="submit" disabled={isProfileSaving} className="h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold">
+                  {isProfileSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                  Synchronize Profile
+                </Button>
+              </div>
+            </form>
+          </Card>
+
+          {/* Preferences Card */}
+          <Card className="p-8 border-border/50 bg-card/30 backdrop-blur-sm shadow-sm rounded-3xl border">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-bold tracking-tight">AI Engine Configuration</h3>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="preferredTone">Preferred Tone</Label>
-              <Controller
-                control={prefsControl}
-                name="preferredTone"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="professional">Professional</SelectItem>
-                      <SelectItem value="casual">Casual & Friendly</SelectItem>
-                      <SelectItem value="enthusiastic">Enthusiastic</SelectItem>
-                      <SelectItem value="persuasive">Persuasive</SelectItem>
-                      <SelectItem value="humorous">Humorous</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
+            <form onSubmit={handlePrefsSubmit(onPrefsSave)} className="space-y-6">
+              <div className="space-y-2.5">
+                <Label htmlFor="defaultModel" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">Intelligence Engine</Label>
+                <Controller
+                  control={prefsControl}
+                  name="defaultModel"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary/50 transition-all font-medium">
+                        <SelectValue placeholder="Select a model" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-border/50 shadow-2xl">
+                        <SelectItem value="gemini-2.5-flash">Gemini 2.5 Flash <span className="text-[10px] opacity-50 ml-2">(High Speed)</span></SelectItem>
+                        <SelectItem value="gemini-2.5-pro">Gemini 2.5 Pro <span className="text-[10px] opacity-50 ml-2">(Maximum Accuracy)</span></SelectItem>
+                        <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash <span className="text-[10px] opacity-50 ml-2">(Standard)</span></SelectItem>
+                        <SelectItem value="gpt-4o-mini">GPT-4o Mini <span className="text-[10px] opacity-50 ml-2">(Legacy)</span></SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
 
-            <Button type="submit" disabled={isPrefsSaving} variant="secondary" className="w-full sm:w-auto mt-4">
-              {isPrefsSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-              Save Preferences
-            </Button>
-          </form>
-        </Card>
+              <div className="space-y-2.5">
+                <Label htmlFor="preferredTone" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">Natural Tone</Label>
+                <Controller
+                  control={prefsControl}
+                  name="preferredTone"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className="h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary/50 transition-all font-medium">
+                        <SelectValue placeholder="Select tone" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-border/50 shadow-2xl">
+                        <SelectItem value="professional">Professional & Crisp</SelectItem>
+                        <SelectItem value="casual">Friendly & Relatable</SelectItem>
+                        <SelectItem value="enthusiastic">Energetic & Bright</SelectItem>
+                        <SelectItem value="persuasive">Dynamic & Convincing</SelectItem>
+                        <SelectItem value="humorous">Light-hearted & Fun</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+
+              <div className="pt-4">
+                <Button type="submit" disabled={isPrefsSaving} variant="secondary" className="h-12 px-8 rounded-xl font-bold bg-muted hover:bg-muted/80 transition-all border border-border/50">
+                  {isPrefsSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                  Update Preferences
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import Link from 'next/link';
@@ -79,7 +80,7 @@ export function HeroSection() {
 
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
           <span className="block text-foreground">Generate AI</span>
-          <span className="mt-2 block min-h-[1.2em] text-gradient">
+          <span className="mt-2 block min-h-[1.2em] text-emerald-500">
             {typed}
             <span className="animate-pulse">|</span>
           </span>

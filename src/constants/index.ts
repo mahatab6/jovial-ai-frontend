@@ -3,7 +3,6 @@
 export const APP_NAME = 'Jovial AI';
 export const APP_DESCRIPTION =
   'Production-grade AI content generation platform for modern teams.';
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 // ─── Content Types ────────────────────────────────────────────────────────────
@@ -64,8 +63,12 @@ export const QUERY_KEYS = {
   CONTENT_LIST: ['content', 'list'],
   JOB: (id: string) => ['job', id],
   STATS_USAGE: ['stats', 'usage'],
+  STATS_CONTENT_TYPE: ['stats', 'content-type'],
   STATS_TEAM: ['stats', 'team'],
+  STATS_ADMIN: ['stats', 'admin'],
   HISTORY: ['history'],
   USERS: ['users'],
+  TEAM_CONTENT: ['team', 'content'],
   ADMIN_DASHBOARD: ['admin', 'dashboard'],
+  ADMIN_USERS: ['admin', 'users'],
 } as const;

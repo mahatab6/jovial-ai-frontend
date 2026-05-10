@@ -18,6 +18,7 @@ import {
 import { PageLoader } from '@/components/shared/Loader';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
+import { QUERY_KEYS } from '@/constants';
 import { toast } from 'sonner';
 import { DataTable, SortableHeader } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
@@ -38,7 +39,7 @@ function AdminContent() {
 
   // Fetch Users
   const { data: users, isLoading: isUsersLoading } = useQuery({
-    queryKey: ['admin-users'],
+    queryKey: QUERY_KEYS.ADMIN_USERS,
     queryFn: async () => {
       try {
         const res = await api.get('/api/v1/users');
@@ -55,7 +56,7 @@ function AdminContent() {
 
   // Fetch Admin Stats
   const { data: adminStats } = useQuery({
-    queryKey: ['admin-stats'],
+    queryKey: QUERY_KEYS.STATS_ADMIN,
     queryFn: async () => {
       try {
         const res = await api.get('/api/v1/stats/admin');
@@ -79,21 +80,21 @@ function AdminContent() {
     },
     // Step 26: Optimistic Update
     onMutate: async ({ userId, role }) => {
-      await queryClient.cancelQueries({ queryKey: ['admin-users'] });
-      const previousUsers = queryClient.getQueryData(['admin-users']);
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.ADMIN_USERS });
+      const previousUsers = queryClient.getQueryData(QUERY_KEYS.ADMIN_USERS);
       
-      queryClient.setQueryData(['admin-users'], (old: UserData[] | undefined) => {
+      queryClient.setQueryData(QUERY_KEYS.ADMIN_USERS, (old: UserData[] | undefined) => {
         return old?.map((u) => u.id === userId ? { ...u, role } : u);
       });
 
       return { previousUsers };
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(['admin-users'], context?.previousUsers);
+      queryClient.setQueryData(QUERY_KEYS.ADMIN_USERS, context?.previousUsers);
       toast.error('Failed to update role. Rollback applied.');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ADMIN_USERS });
     },
     onSuccess: () => {
       toast.success('Role updated successfully (Optimistic UI)');

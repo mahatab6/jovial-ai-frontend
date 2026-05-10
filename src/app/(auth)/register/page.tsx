@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, UserPlus, Globe } from 'lucide-react';
+import { Loader2, UserPlus, Globe, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,7 +36,17 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { setUser, setToken } = useAuthStore();
+  const { setUser, setToken, isAuthenticated } = useAuthStore();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(ROUTES.DASHBOARD);
+    }
+  }, [isAuthenticated, router]);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -93,13 +104,43 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" placeholder="Min 8 characters" {...register('password')} className={errors.password ? 'border-destructive' : ''} />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Min 8 characters"
+              {...register('password')}
+              className={`${errors.password ? 'border-destructive' : ''} pr-10`}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="confirmPassword">Confirm password</Label>
-          <Input id="confirmPassword" type="password" placeholder="Repeat password" {...register('confirmPassword')} className={errors.confirmPassword ? 'border-destructive' : ''} />
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder="Repeat password"
+              {...register('confirmPassword')}
+              className={`${errors.confirmPassword ? 'border-destructive' : ''} pr-10`}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 

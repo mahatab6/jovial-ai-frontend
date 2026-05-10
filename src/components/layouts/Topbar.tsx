@@ -74,21 +74,19 @@ export function Topbar({ title }: TopbarProps) {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user?.name}</p>
-                <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push(ROUTES.PROFILE)}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(ROUTES.SETTINGS)}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
               </DropdownMenuItem>
               {user?.role === 'ADMIN' && (
                 <DropdownMenuItem onClick={() => router.push('/admin')}>
@@ -98,7 +96,7 @@ export function Topbar({ title }: TopbarProps) {
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={handleLogout}
               className="text-destructive focus:bg-destructive/10 focus:text-destructive"
             >

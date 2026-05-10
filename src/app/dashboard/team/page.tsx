@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageLoader } from '@/components/shared/Loader';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
+import { QUERY_KEYS } from '@/constants';
 import { toast } from 'sonner';
 import { DataTable, SortableHeader } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
@@ -32,7 +33,7 @@ function TeamContent() {
 
   // Fetch Team Stats
   const { data: teamStats } = useQuery({
-    queryKey: ['team-stats'],
+    queryKey: QUERY_KEYS.STATS_TEAM,
     queryFn: async () => {
       try {
         const res = await api.get('/api/v1/stats/team');
@@ -50,7 +51,7 @@ function TeamContent() {
 
   // Fetch Team Content
   const { data: teamContent, isLoading: isContentLoading } = useQuery({
-    queryKey: ['team-content'],
+    queryKey: QUERY_KEYS.TEAM_CONTENT,
     queryFn: async () => {
       try {
         const res = await api.get('/api/v1/ai/team');

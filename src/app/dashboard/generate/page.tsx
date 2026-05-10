@@ -52,10 +52,10 @@ const TONES = [
 ];
 
 const MODELS = [
-  { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast & Efficient)' },
-  { value: 'gpt-4o', label: 'GPT-4o (High Quality)' },
-  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (Google)' },
-  { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Google Premium)' },
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Google - Recommended)' },
+  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Google Premium)' },
+  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (Classic)' },
+  { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast)' },
 ];
 
 export default function AIGeneratorPage() {
@@ -73,7 +73,7 @@ export default function AIGeneratorPage() {
     defaultValues: {
       type: 'BLOG',
       tone: 'professional',
-      model: 'gpt-4o-mini',
+      model: 'gemini-2.5-flash',
     },
   });
 

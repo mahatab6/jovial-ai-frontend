@@ -3,6 +3,7 @@
 import { Sidebar } from '@/components/layouts/Sidebar';
 import { Topbar } from '@/components/layouts/Topbar';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ROUTES } from '@/constants';
@@ -14,16 +15,18 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated } = useAuthStore();
+  const { isLoading } = useAuth();
   const router = useRouter();
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated, but ONLY after session check is done
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.replace(ROUTES.LOGIN);
     }
-  }, [isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router]);
 
-  if (!isAuthenticated) {
+  // Show loader while checking session or if not authenticated yet
+  if (isLoading || !isAuthenticated) {
     return <PageLoader />;
   }
 

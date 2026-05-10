@@ -59,10 +59,10 @@ export function DashboardPieChart({
               paddingAngle={5}
               stroke="none"
             >
-              {data.map((entry, index) => (
+              {data?.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.fill || `var(--color-${entry.name.toLowerCase().replace(/_/g, '-')})`} 
+                  fill={entry.fill || (entry.name ? `var(--color-${entry.name.toLowerCase().replace(/_/g, '-')})` : 'var(--primary)')} 
                 />
               ))}
             </Pie>

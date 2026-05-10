@@ -7,12 +7,14 @@ interface User {
   email: string;
   role: 'USER' | 'MANAGER' | 'ADMIN';
   credits: number;
+  updatedAt?: string;
 }
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  initialize: () => Promise<void>;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -24,6 +26,34 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      initialize: async () => {
+        try {
+          // Use the official authClient to get session. 
+          // This ensures consistent cookie and data handling.
+          const { authClient } = await import('@/lib/auth-client');
+          const response = await (authClient as any).getSession();
+          
+          if (response?.data?.user) {
+            const user = response.data.user;
+            set({ 
+              user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: (user as any).role || 'USER',
+                credits: (user as any).credits || 0,
+                updatedAt: (user as any).updatedAt || new Date().toISOString(),
+              }, 
+              isAuthenticated: true 
+            });
+          } else {
+            set({ user: null, isAuthenticated: false });
+          }
+        } catch (error) {
+          console.error('Auth initialization failed:', error);
+          set({ user: null, isAuthenticated: false });
+        }
+      },
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setToken: (token) => {
         if (token) {

@@ -101,6 +101,19 @@
   body {
     @apply bg-background text-foreground transition-colors duration-300;
   }
+  
+  button, 
+  a, 
+  [role="button"],
+  .cursor-pointer {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  a:disabled,
+  [disabled] {
+    @apply cursor-not-allowed opacity-50;
+  }
 }
 
 @layer utilities {
