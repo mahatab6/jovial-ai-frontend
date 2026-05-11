@@ -1,111 +1,163 @@
-# Jovial AI — Frontend
+# 🚀 Jovial AI - Frontend
 
-NPM package: `jovial-ai-frontend`
+### **Unleash Your Creativity with AI-Powered Content Generation**
 
-Frontend live: https://jovial-ai-frontend.vercel.app
-
-Backend live: https://jovial-backend-production.up.railway.app
-
-GitHub Repo (frontend): https://github.com/mahatab6/jovial-ai-frontend
-
-GitHub Repo (backend): https://github.com/mahatab6/jovial-backend
-
-## Test Accounts
-
-- **Admin**
-  - email: admin@gmail.com
-  - pass: password1234
-- **Manager**
-  - email: manager@gmail.com
-  - pass: password1234
-- **User**
-  - email: user@gmail.com
-  - pass: password1234
-
-## Project Overview
-
-Jovial AI is an AI-powered content generation platform that helps users produce blog posts, social content, emails, and product descriptions using modern LLMs and custom prompts. This repository contains the frontend (Next.js + TypeScript) for the SaaS web app.
-
-## Tech Stack
-
-- Frontend: Next.js (App Router), React, TypeScript
-- Styling: Tailwind CSS (utility-first) and custom CSS
-- State & Data: React Query, Zustand (where applicable)
-- UI: Custom components + Lucide icons
-- API: Backend (separate repo) provides AI endpoints and auth
-- Hosting: Vercel (frontend), Railway (backend)
-
-## AI Features
-
-- Content generation: create blog posts, marketing copy, social captions, and email drafts using AI prompts and templates.
-- Regeneration & variations: generate multiple variants for A/B testing and iteratively refine outputs.
-- History & results viewer: store and review previously generated outputs with metadata.
-- Job tracking: background generation jobs can be monitored and retrieved.
-
-Feature notes: the frontend calls the backend API for AI requests, which in turn calls the LLM provider. The UI includes controls for model options, length, tone, and templates.
-
-## Setup Instructions (Frontend)
-
-Prerequisites
-
-- Node.js 18+ and npm/yarn/pnpm
-- Access to the backend API (see backend repo)
-
-Clone
-
-```bash
-git clone https://github.com/mahatab6/jovial-ai-frontend.git
-cd jovial-ai-frontend
-```
-
-Install
-
-```bash
-npm install
-# or
-pnpm install
-```
-
-Environment
-
-Create a `.env.local` file at the project root and set any required variables. Typical values (check backend README for exact names):
-
-```
-NEXT_PUBLIC_API_BASE_URL=https://jovial-backend-production.up.railway.app
-# Add any auth or third-party keys here
-```
-
-Run (development)
-
-```bash
-npm run dev
-# open http://localhost:3000
-```
-
-Build (production)
-
-```bash
-npm run build
-npm run start
-```
-
-Deployment
-
-Deploy to Vercel by connecting the GitHub repository or use the Vercel CLI. Ensure the environment variables match those used in `.env` and the backend is reachable.
-
-## Backend
-
-See the backend repo for API details, database setup, and environment variables: https://github.com/mahatab6/jovial-backend
-
-## Admin & Developer Notes
-
-- Default test accounts are included above for convenience in staging/demo environments. Rotate these credentials before using in production.
-- If you need additional test users or want seeding scripts run, check the backend repo.
-
-## Contact
-
-For questions or issues, open an issue on the frontend or backend GitHub repo.
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen?style=flat-square)]()
 
 ---
 
-This README was updated to include live links, repos, test accounts, project overview, tech stack, AI feature notes, and setup instructions.
+## 📖 Project Overview
+
+**Jovial AI** is a cutting-edge, production-grade AI content generation platform designed for modern marketing teams, bloggers, and entrepreneurs. Built with a focus on speed, user experience, and scalability, Jovial AI allows users to generate high-quality blog posts, social media updates, and professional emails in seconds.
+
+### **The Problem**
+Content creation is time-consuming and often leads to "writer's block." Teams struggle to maintain consistent quality and tone across multiple channels.
+
+### **The Solution**
+Jovial AI leverages the power of Google Gemini AI to provide specialized templates that guide users to perfect outputs every time. It eliminates friction with a seamless dashboard and role-based collaboration features.
+
+---
+
+## 🔗 Live Links
+
+| Type | URL |
+| :--- | :--- |
+| **Frontend Live** | [https://jovial-ai-frontend.vercel.app](https://jovial-ai-frontend.vercel.app) |
+| **Backend API** | [https://jovial-backend-production.up.railway.app](https://jovial-backend-production.up.railway.app) |
+| **GitHub Repo** | [https://github.com/mahatab6/jovial-ai-frontend](https://github.com/mahatab6/jovial-ai-frontend) |
+
+---
+
+## 🖼️ Preview Section
+
+| Home Page | Dashboard Overview |
+| :--- | :--- |
+| ![Home Page](https://via.placeholder.com/800x450?text=Jovial+AI+Home+Page) | ![Dashboard](https://via.placeholder.com/800x450?text=Jovial+AI+Dashboard) |
+
+| AI Generation | Mobile View |
+| :--- | :--- |
+| ![AI Generator](https://via.placeholder.com/800x450?text=AI+Content+Generator) | ![Mobile View](https://via.placeholder.com/400x800?text=Mobile+Responsive+View) |
+
+---
+
+## ✨ Features
+
+### 🔐 Authentication Features
+- [x] **Better-Auth Integration**: Secure, modern authentication.
+- [x] **Social Login**: Google OAuth support for frictionless access.
+- [x] **Session Persistence**: Robust cookie-based and bearer token session management.
+
+### 🤖 AI Features
+- [x] **Gemini 1.5 Integration**: High-speed, accurate content generation.
+- [x] **Dynamic Prompting**: Templates provide strict instructions to AI for consistent results.
+- [x] **Live Preview**: Real-time markdown rendering of generated content.
+
+### 📊 Dashboard & User Features
+- [x] **Role-Based Access**: Specialized views for ADMIN, MANAGER, and USER.
+- [x] **Usage Analytics**: Track token consumption and generation history.
+- [x] **Template Explorer**: Search, filter, and paginate through specialized AI templates.
+
+### 🛠️ Admin Features
+- [x] **Template Management**: Full CRUD interface for managing AI templates.
+- [x] **User Moderation**: Manage roles and permissions for the entire platform.
+- [x] **Global Analytics**: View system-wide health and usage stats.
+
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend Core**
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS & Framer Motion (Animations)
+
+### **State & Data**
+- **Data Fetching**: TanStack Query (React Query) v5
+- **State Management**: Zustand
+- **Form Validation**: Zod
+
+### **Infrastructure**
+- **Auth Client**: Better-Auth React
+- **API Client**: Axios (with centralized interceptors)
+- **Deployment**: Vercel
+
+---
+
+## 🏗️ Architecture
+
+### **Folder Structure**
+```bash
+src/
+├── app/            # Next.js App Router (Pages & API Routes)
+├── components/     # UI Components (Atomic Design)
+│   ├── ui/         # Shadcn Base Components
+│   ├── admin/      # Admin-specific modules
+│   ├── shared/     # Global reusable components
+│   └── layouts/    # Navbar, Sidebar, Footer
+├── hooks/          # Custom React Hooks
+├── lib/            # Utility functions (Axios, utils)
+├── services/       # API Service Layer
+├── store/          # Zustand Global Stores
+└── types/          # TypeScript Interfaces
+```
+
+### **Performance Optimizations**
+- **Route Segment Config**: Leverages static and dynamic rendering appropriately.
+- **Component Lazy Loading**: Uses `next/dynamic` for heavy UI components.
+- **Debounced Searching**: Prevents API over-fetching during search interactions.
+- **Optimistic UI Updates**: Instant feedback for role changes and content updates.
+
+---
+
+## 🚀 Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/mahatab6/jovial-ai-frontend.git
+   cd jovial-ai-frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**
+   Create a `.env` file in the root directory:
+   ```env
+   NEXT_PUBLIC_API_URL=your_backend_url
+   ```
+
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for Production**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 📈 Roadmap
+- [ ] **Stripe Integration**: Monetization and subscription plans.
+- [ ] **Multi-Language Support**: Content generation in 50+ languages.
+- [ ] **Custom AI Tuning**: Allow users to provide their own style guides.
+
+---
+
+## 👨‍💻 Author
+**Mahatab**
+- **GitHub**: [@mahatab6](https://github.com/mahatab6)
+- **Portfolio**: [Your Portfolio Link]
+- **LinkedIn**: [Your LinkedIn Link]
+
+---
+
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
