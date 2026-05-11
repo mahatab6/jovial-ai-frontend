@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   Sparkles,
+  LayoutGrid,
   Menu,
   X,
   LayoutDashboard,
@@ -39,17 +40,19 @@ import { cn } from '@/lib/utils';
 
 // ─── 4 public nav links (logged out) ─────────────────────────────────────────
 const publicNav = [
-  { label: 'Home',     href: ROUTES.HOME },
-  { label: 'Features', href: '/#features' },
-  { label: 'Pricing',  href: '/#pricing' },
-  { label: 'Blog',     href: '/blog',    icon: BookOpen },
-  { label: 'About',    href: '/about',   icon: Info },
-  { label: 'Contact',  href: '/contact', icon: Mail },
+  { label: 'Home',      href: ROUTES.HOME },
+  { label: 'Templates', href: ROUTES.TEMPLATES, icon: LayoutGrid },
+  { label: 'Features',  href: '/#features' },
+  { label: 'Pricing',   href: '/#pricing' },
+  { label: 'Blog',      href: '/blog',    icon: BookOpen },
+  { label: 'About',     href: '/about',   icon: Info },
+  { label: 'Contact',   href: '/contact', icon: Mail },
 ];
 
 // ─── 6 authenticated nav links (logged in) ───────────────────────────────────
 const authNavBase = [
   { label: 'Dashboard',    href: ROUTES.DASHBOARD,    icon: LayoutDashboard },
+  { label: 'Templates',    href: ROUTES.TEMPLATES,    icon: Sparkles },
   { label: 'AI Generator', href: ROUTES.AI_GENERATOR, icon: Wand2 },
   { label: 'History',      href: ROUTES.HISTORY,      icon: History },
   { label: 'Analytics',    href: ROUTES.ANALYTICS,    icon: BarChart3 },

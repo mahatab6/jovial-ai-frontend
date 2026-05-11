@@ -3,6 +3,8 @@
 import { useEffect, useMemo, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/auth-provider';
+
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Users, BarChart3, Clock, FileText, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -208,10 +210,11 @@ function TeamContent() {
 }
 
 export default function TeamDashboardPage() {
-  const { user, isLoading: isAuthLoading } = useAuthStore();
+  const { user } = useAuthStore();
+  const { isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
 
-  // Protect route
+  // Protect route — wait for auth to finish loading before redirecting
   useEffect(() => {
     if (!isAuthLoading && user?.role !== 'MANAGER' && user?.role !== 'ADMIN') {
       toast.error('Access Denied', { description: 'Manager or Admin privileges required.' });
@@ -219,7 +222,13 @@ export default function TeamDashboardPage() {
     }
   }, [user, isAuthLoading, router]);
 
-  if (isAuthLoading || (user && user.role !== 'MANAGER' && user.role !== 'ADMIN')) {
+  // Show loader while auth is initialising
+  if (isAuthLoading) {
+    return <PageLoader />;
+  }
+
+  // After loading: if not authorized, show loader briefly while redirect happens
+  if (!user || (user.role !== 'MANAGER' && user.role !== 'ADMIN')) {
     return <PageLoader />;
   }
 

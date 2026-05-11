@@ -54,6 +54,7 @@ export const ROUTES = {
   PROFILE: '/dashboard/profile',
   TEAM: '/dashboard/team',
   ADMIN: '/dashboard/admin',
+  TEMPLATES: '/templates',
 } as const;
 
 // ─── TanStack Query Keys ──────────────────────────────────────────────────────
@@ -71,4 +72,6 @@ export const QUERY_KEYS = {
   TEAM_CONTENT: ['team', 'content'],
   ADMIN_DASHBOARD: ['admin', 'dashboard'],
   ADMIN_USERS: ['admin', 'users'],
+  TEMPLATES_LIST: ['templates', 'list'],
+  TEMPLATE_DETAIL: (id: string) => ['templates', 'detail', id],
 } as const;

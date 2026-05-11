@@ -3,11 +3,13 @@
 import { useEffect, useMemo, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/auth-provider';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Shield, Users, Activity, Settings, TrendingUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+
 import {
   Select,
   SelectContent,
@@ -23,6 +25,8 @@ import { toast } from 'sonner';
 import { DataTable, SortableHeader } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
 import { DashboardGridSkeleton, TableSkeleton } from '@/components/dashboard/skeletons/DashboardSkeleton';
+import { TemplatesManagement } from '@/components/admin/TemplatesManagement';
+import { LayoutGrid } from 'lucide-react';
 
 // Define types
 interface UserData {
@@ -148,9 +152,10 @@ function AdminContent() {
 
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="mb-6 grid w-full max-w-md grid-cols-2">
+      <TabsList className="mb-6 grid w-full max-w-lg grid-cols-3">
         <TabsTrigger value="overview">System Overview</TabsTrigger>
         <TabsTrigger value="users">User Management</TabsTrigger>
+        <TabsTrigger value="templates">Templates</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">
@@ -230,15 +235,20 @@ function AdminContent() {
           )}
         </Card>
       </TabsContent>
+
+      <TabsContent value="templates" className="space-y-6">
+        <TemplatesManagement />
+      </TabsContent>
     </Tabs>
   );
 }
 
 export default function AdminDashboardPage() {
-  const { user, isLoading: isAuthLoading } = useAuthStore();
+  const { user } = useAuthStore();
+  const { isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
 
-  // Protect route
+  // Protect route — wait for auth to finish loading before redirecting
   useEffect(() => {
     if (!isAuthLoading && user?.role !== 'ADMIN') {
       toast.error('Access Denied', { description: 'Admin privileges required.' });
@@ -246,7 +256,13 @@ export default function AdminDashboardPage() {
     }
   }, [user, isAuthLoading, router]);
 
-  if (isAuthLoading || (user && user.role !== 'ADMIN')) {
+  // Show loader while auth is initialising
+  if (isAuthLoading) {
+    return <PageLoader />;
+  }
+
+  // After loading: if not admin, show loader briefly while redirect happens
+  if (!user || user.role !== 'ADMIN') {
     return <PageLoader />;
   }
 

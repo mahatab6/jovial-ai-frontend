@@ -15,7 +15,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  initialize: () => Promise<void>;
+  initialize: () => void;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -23,58 +23,56 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
       isLoading: true,
-      initialize: async () => {
-        try {
-          // Use the official authClient to get session. 
-          // This ensures consistent cookie and data handling.
-          const { authClient } = await import('@/lib/auth-client');
-          const response = await (authClient as any).getSession();
-          
-          if (response?.data?.user) {
-            const user = response.data.user;
-            set({ 
-              user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                role: (user as any).role || 'USER',
-                credits: (user as any).credits || 0,
-                updatedAt: (user as any).updatedAt || new Date().toISOString(),
-              }, 
-              isAuthenticated: true 
-            });
-          } else {
-            set({ user: null, isAuthenticated: false });
-          }
-        } catch (error) {
-          console.error('Auth initialization failed:', error);
-          set({ user: null, isAuthenticated: false });
-        } finally {
-          set({ isLoading: false });
-        }
+      /**
+       * Called once by AuthProvider on mount.
+       * Reads the persisted token from localStorage and restores auth state.
+       * No network call needed — the token itself is the source of truth.
+       */
+      initialize: () => {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const user = get().user;
+        set({
+          token: token ?? get().token,
+          isAuthenticated: !!(token || get().token),
+          // If zustand-persist already rehydrated a user, keep it
+          user: user ?? null,
+          isLoading: false,
+        });
       },
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setToken: (token) => {
-        if (token) {
-          localStorage.setItem('token', token);
-        } else {
-          localStorage.removeItem('token');
+        if (typeof window !== 'undefined') {
+          if (token) {
+            localStorage.setItem('token', token);
+          } else {
+            localStorage.removeItem('token');
+          }
         }
         set({ token, isAuthenticated: !!token });
       },
       logout: () => {
-        localStorage.removeItem('token');
-        set({ user: null, token: null, isAuthenticated: false });
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+        }
+        set({ user: null, token: null, isAuthenticated: false, isLoading: false });
       },
     }),
     {
       name: 'auth-storage',
+      // Persist token AND user so both survive a page refresh
       partialize: (state) => ({ token: state.token, user: state.user }),
+      // After zustand rehydrates from localStorage, mark isAuthenticated correctly
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.isAuthenticated = !!(state.token || state.user);
+          // isLoading stays true until initialize() is explicitly called
+        }
+      },
     }
   )
 );
