@@ -3,37 +3,65 @@ import { toast } from 'sonner';
 
 /**
  * CENTRALIZED API CLIENT
- * 
- * Using a single axios instance with `withCredentials: true` ensures that 
- * Better Auth cookies are automatically sent with every request.
+ *
+ * Token-based authentication using localStorage.
+ * The token is stored under the key "token" and attached
+ * as a Bearer Authorization header on every request.
  */
+
+// ─── Token Helpers ────────────────────────────────────────────────────────────
+
+const TOKEN_KEY = 'token';
+
+/** Retrieve the auth token from localStorage. */
+export const getToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+/** Persist the auth token to localStorage. */
+export const setToken = (token: string): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(TOKEN_KEY, token);
+};
+
+/** Remove the auth token from localStorage (e.g. on logout). */
+export const removeToken = (): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(TOKEN_KEY);
+};
+
+// ─── Axios Instance ───────────────────────────────────────────────────────────
+
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Required for cookie-based sessions
+  // withCredentials removed — we use token-based auth via localStorage
 });
 
 // Guard to avoid attaching interceptors multiple times during HMR
 if (!(api as any).__interceptorsAttached) {
   (api as any).__interceptorsAttached = true;
 
-  // REQUEST INTERCEPTOR
+  // REQUEST INTERCEPTOR — attach Bearer token from localStorage
   api.interceptors.request.use(
     (config) => {
-      // NOTE: We rely on Cookies for authentication. 
-      // Manual Authorization headers are removed to avoid conflicts and stale token issues.
+      const token = getToken();
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
       return config;
     },
     (error) => Promise.reject(error)
   );
 
-  // RESPONSE INTERCEPTOR
+  // RESPONSE INTERCEPTOR — global error handling
   api.interceptors.response.use(
     (response) => response,
     (error) => {
-      // Avoid processing errors if they don't have a response (network errors)
+      // Network / no-response errors
       if (!error.response) {
         toast.error('Network Error', { description: 'Please check your internet connection.' });
         return Promise.reject(error);
@@ -42,20 +70,17 @@ if (!(api as any).__interceptorsAttached) {
       const status = error.response.status;
       const message = error.response.data?.message || 'Something went wrong';
 
-      // Global Error Handling
       switch (status) {
         case 401:
-          // Unauthorized: The cookie might be expired. 
-          // We don't auto-redirect here to avoid loops in protected routes.
+          // Token expired or invalid — clear it so the user is prompted to re-login
+          removeToken();
           break;
         case 429:
-          // Rate Limiting: Critical for preventing spam
           toast.error('Too Many Requests', { description: 'Please slow down and try again later.' });
           break;
         default:
-          // Generic error feedback
           if (status >= 500) {
-            toast.error('Server Error', { description: 'A server-side error occurred.' });
+            toast.error('Server Error', { description: message });
           }
       }
 
